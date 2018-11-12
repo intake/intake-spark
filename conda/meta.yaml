@@ -1,0 +1,38 @@
+package:
+   name: intake-elasticsearch
+   version: {{ GIT_DESCRIBE_TAG }}
+
+source:
+   path: ..
+
+build:
+  number: {{ GIT_DESCRIBE_NUMBER }}
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+  noarch: python
+
+requirements:
+  build:
+    - python
+    - jinja2
+    - elasticsearch
+  run:
+    - intake>=0.2
+    - python
+    - elasticsearch
+
+test:
+  source_files:
+    - tests
+  requires:
+    - pytest
+    - pytest-cov
+    - coverage
+  commands:
+    - py.test --verbose --cov=intake_elasticsearch tests
+
+about:
+  home: https://github.com/ContinuumIO/intake-elasticsearch
+  license: BSD
+  license_file: LICENSE
+  summary: |
+    ElasticSearch plugin for Intake

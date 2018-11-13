@@ -1,8 +1,7 @@
-Welcome to intake_elasticsearch's documentation!
-================================================
+Welcome to intake-spark's documentation!
+========================================
 
-This package enables the Intake data access and catalog system to read from the ElasticSearch
-data analytics platform.
+This package enables the Intake data access and catalog system to read from Apache Spark.
 
 .. toctree::
    :maxdepth: 2

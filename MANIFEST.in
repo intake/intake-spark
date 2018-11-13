@@ -1,5 +1,6 @@
 recursive-include . *.html
 recursive-include . *.csv
 recursive-include . *.yml
+recursive-include . *.yaml
 include versioneer.py
-include intake_elasticsearch/_version.py
+include intake_spark/_version.py

@@ -1,5 +1,5 @@
 package:
-   name: intake-elasticsearch
+   name: intake-spark
    version: {{ GIT_DESCRIBE_TAG }}
 
 source:
@@ -14,11 +14,10 @@ requirements:
   build:
     - python
     - jinja2
-    - elasticsearch
   run:
     - intake>=0.2
     - python
-    - elasticsearch
+    - pyspark
 
 test:
   source_files:
@@ -28,11 +27,11 @@ test:
     - pytest-cov
     - coverage
   commands:
-    - py.test --verbose --cov=intake_elasticsearch tests
+    - py.test --verbose --cov=intake_spark tests
 
 about:
-  home: https://github.com/ContinuumIO/intake-elasticsearch
+  home: https://github.com/ContinuumIO/intake-spark
   license: BSD
   license_file: LICENSE
   summary: |
-    ElasticSearch plugin for Intake
+    Apache Spark plugin for Intake

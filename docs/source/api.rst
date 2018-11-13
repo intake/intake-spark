@@ -1,14 +1,14 @@
 API Reference
 =============
 
-.. currentmodule:: intake_elasticsearch
+.. currentmodule:: intake_spark
 
 .. autosummary::
-   intake_elasticsearch.elasticsearch_table.ElasticSearchTableSource
-   intake_elasticsearch.elasticsearch_seq.ElasticSearchSeqSource
+   intake_spark.spark_table.sparkTableSource
+   intake_spark.spark_seq.sparkSeqSource
 
-.. autoclass:: intake_elasticsearch.elasticsearch_table.ElasticSearchTableSource
+.. autoclass:: intake_spark.spark_table.sparkTableSource
    :members:
 
-.. autoclass:: intake_elasticsearch.elasticsearch_seq.ElasticSearchSeqSource
+.. autoclass:: intake_spark.spark_seq.sparkSeqSource
    :members:

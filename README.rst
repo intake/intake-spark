@@ -1,3 +1,3 @@
-Intake-elasticsearch: ElasticSearch Plugin for Intake
------------------------------------------------------
+Intake-spark: Apache Spark Plugin for Intake
+--------------------------------------------
 

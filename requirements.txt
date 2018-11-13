@@ -1,5 +1,3 @@
 intake
-elasticsearch>=6.0.0
+pyspark
 dask
-requests
-pandas

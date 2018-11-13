@@ -11,11 +11,9 @@ class SparkRDD(DataSource):
     name = 'spark_rdd'
     partition_access = True
 
-    def __init__(self, method, context_kwargs, *args, **kwargs):
-        metadata = kwargs.pop('metadata', {})
+    def __init__(self, args, context_kwargs=None, metadata=None):
         super(SparkRDD, self).__init__(metadata)
-        self.holder = SparkHolder(False, method, context_kwargs,
-                                  *args, **kwargs)
+        self.holder = SparkHolder(False, args, context_kwargs)
         self.ref = None
 
     def _get_schema(self):
@@ -55,3 +53,55 @@ class SparkDataFrame(DataSource):
     version = __version__
     name = 'spark_dataframe'
     partition_access = True
+
+    def __init__(self, args, context_kwargs=None, metadata=None):
+        super(SparkDataFrame, self).__init__(metadata)
+        self.holder = SparkHolder(True, args, context_kwargs)
+        self.ref = None
+
+    def _get_schema(self):
+        if self.ref is None:
+            self.ref = self.holder.setup()
+            self.npartitions = self.ref.rdd.getNumPartitions()
+            rows = self.ref.take(10)
+            self.dtype = pandas_dtypes(self.ref.schema, rows)
+            self.shape = (None,len(self.dtype))
+        return Schema(npartitions=self.npartitions,
+                      extra_metadata=self.metadata,
+                      dtype=self.dtype,
+                      shape=self.shape)
+
+    def read_partition(self, i):
+        import pandas as pd
+        self._get_schema()
+        sc = self.holder.sc[0]
+        out = sc.runJob(self.ref.rdd, lambda x: x, partitions=[i])
+        df = pd.DataFrame.from_records(out)
+        df.columns = list(self.dtype)
+        return df
+
+    def to_spark(self):
+        self._get_schema()
+        return self.ref
+
+    def read(self):
+        self._get_schema()
+        return self.ref.toPandas()
+
+    def _close(self):
+        self.ref = None
+
+
+def pandas_dtypes(schema, rows):
+    """Rough dtype for the given pyspark schema"""
+    import pandas as pd
+    from pyspark.sql.dataframe import (_to_corrected_pandas_type, IntegralType)
+    # copied from toPandas() method
+    df = pd.DataFrame.from_records(rows)
+    df.columns = [s.name for s in schema]
+    for field in schema:
+        pandas_type = _to_corrected_pandas_type(field.dataType)
+        if pandas_type is not None and not(
+                isinstance(field.dataType, IntegralType) and field.nullable):
+            df[field.name] = df[field.name].astype(pandas_type)
+    return {k: str(v) for k, v in df.dtypes.to_dict().items()}

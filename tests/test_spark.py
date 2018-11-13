@@ -1,27 +1,27 @@
 import os
-import pickle
-import time
-
-import pytest
 import pandas as pd
+from intake_spark import SparkDataFrame, SparkRDD
 
-from .util import verify_datasource_interface
-
-CONNECT = {'host': 'localhost', 'port': 9200}
 TEST_DATA_DIR = 'tests'
 TEST_DATA = 'sample1.csv'
-df = pd.read_csv(os.path.join(TEST_DATA_DIR, TEST_DATA))
+fn = os.path.join(TEST_DATA_DIR, TEST_DATA)
+df = pd.read_csv(fn)
 
 
-@pytest.fixture(scope='module')
-def spark():
-    """Start docker container for ES and cleanup connection afterward."""
-    import pyspark
-
-    try:
-        sc = pyspark.SparkContext.getOrCreate()
-        yield dict(sc.getConf().getAll())
-    finally:
-        sc.stop()
+def test_rdd():
+    text = SparkRDD(
+        [('textFile', (fn,)),
+         ('map', (len,))])
+    expected = [len(l) - 1 for l in open(fn)]  # spark trims newlines
+    assert text.read() == expected
 
 
+def test_df():
+    text = SparkDataFrame([
+        ('read', ),
+        ('format', ('csv', )),
+        ('option', ('header', 'true')),
+        ('load', (fn, ))
+    ], {})
+    d = text.read()
+    assert d.astype(df.dtypes).equals(df)

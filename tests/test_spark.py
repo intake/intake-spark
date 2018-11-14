@@ -1,6 +1,7 @@
 import os
 import pandas as pd
-from intake_spark import SparkDataFrame, SparkRDD
+from intake_spark import SparkDataFrame, SparkRDD, SparkTablesCatalog
+from intake_spark.base import SparkHolder
 
 TEST_DATA_DIR = 'tests'
 TEST_DATA = 'sample1.csv'
@@ -25,3 +26,20 @@ def test_df():
     ], {})
     d = text.read()
     assert d.astype(df.dtypes).equals(df)
+
+
+def test_cat():
+    import pyspark
+    h = SparkHolder(True, [('catalog', )], {})
+    h.setup()  # create spark session early
+    session = h.session[0]
+    d = session.createDataFrame(df)
+    sql = pyspark.HiveContext(session.sparkContext)
+    sql.registerDataFrameAsTable(d, 'temp')
+
+    cat = SparkTablesCatalog()
+    assert 'temp' in list(cat)
+    s = cat.temp()
+    assert isinstance(s, SparkDataFrame)
+    out = s.read()
+    assert out.astype(df.dtypes).equals(df)

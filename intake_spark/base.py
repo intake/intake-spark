@@ -106,6 +106,7 @@ class SparkHolder(object):
         self.sql = sql
         self.args = args
         self.context_kwargs = context_kwargs or {}
+        self.hive = self.context_kwargs.pop('hive', True)
 
     def __getstate__(self):
         fields = ['method', 'sql', 'args', 'kwargs', 'context_kwargs']

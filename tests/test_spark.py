@@ -17,6 +17,11 @@ def test_rdd():
     assert text.read() == expected
 
 
+def test_readtext():
+    # TODO  test textfile.to_spark after Intake release 0.3.0
+    pass
+
+
 def test_df():
     text = SparkDataFrame([
         ('read', ),

@@ -4,11 +4,15 @@ API Reference
 .. currentmodule:: intake_spark
 
 .. autosummary::
-   intake_spark.spark_table.sparkTableSource
-   intake_spark.spark_seq.sparkSeqSource
+   intake_spark.spark_sources.SparkRDD
+   intake_spark.spark_sources.SparkDataFrame
+   intake.spark.spark_cat.SparkTablesCatalog
 
-.. autoclass:: intake_spark.spark_table.sparkTableSource
+.. autoclass:: intake_spark.spark_sources.SparkRDD
    :members:
 
-.. autoclass:: intake_spark.spark_seq.sparkSeqSource
+.. autoclass:: intake_spark.spark_sources.SparkDataFrame
+   :members:
+
+.. autoclass:: intake.spark.spark_cat.SparkTablesCatalog
    :members:

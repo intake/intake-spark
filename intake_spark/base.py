@@ -7,7 +7,7 @@ class SparkHolder(object):
     lock = threading.Lock()
 
     def set_context(self, sc=None, conf=None, master=None, app_name=None,
-                    executor_env=None, spark_home=None):
+                    executor_env=None, spark_home=None, hive=True, **kw):
         """Establish spark context for this session
 
         Parameters
@@ -26,8 +26,11 @@ class SparkHolder(object):
             If given, environment variables values passed on
         spark_home: str
             Location of spark installation
+        hive: bool
+            default to pass to set_session(), if using
         """
         import pyspark
+        self.hive = hive
         with self.lock:
             if sc is None:
                 if self.sc[0] is not None:
@@ -45,9 +48,18 @@ class SparkHolder(object):
                 sc = pyspark.SparkContext.getOrCreate(config)
             self.sc[0] = sc
 
-    @classmethod
-    def set_session(self, session=None, hive=True):
-        """Set global SQL SparkSession"""
+    def set_session(self, session=None, hive=None, **kw):
+        """Set global SQL SparkSession
+
+        Parameters
+        ----------
+        session: SparkSession or None
+            Explicitly provide a session object, if you have one
+        hive: bool
+            Whether to enable Hive support when creating session
+        """
+        if hive is None:
+            hive = self.hive
         with self.lock:
             if session is None:
                 if self.session[0] is not None:
@@ -60,6 +72,16 @@ class SparkHolder(object):
                     session = sql.SparkSession.enableHiveSupport().getOrCreate()
             self.session[0] = session
 
+    @classmethod
+    def set_class_session(cls, **context_kwargs):
+        """Create or use spark session/context for instances of this class
+
+        See the input parameters of ``set_context`` and ``set_session``.
+        """
+        inst = cls(True, (), context_kwargs)
+        inst.set_context(**context_kwargs)
+        inst.set_session(**context_kwargs)
+
     def __init__(self, sql, args, context_kwargs):
         """Create reference to spark resource
 
@@ -68,12 +90,15 @@ class SparkHolder(object):
         sql: bool
             If True, will use SQLContext (i.e., Session), returning a dataframe,
             if False, will use bare SparkContext, returning RDD (list-like)
-        args_dict: list
-            Details of spark methods to invoke. The structure of this is, that
-            each element is a tuple (method_name, args, kwargs), where
-            method_name is a string corresponding to the each stage, and
-            args (a tuple) and kwargs (a dict) are applied to that stage. See
-            the examples.
+        args: list or tuples
+            Details of a sequence of spark methods to invoke.
+            Each element is must be a tuple tuple, (method_name, args, kwargs),
+            where method_name is a string corresponding to the attribute lookup
+            to perform on the result of the previous stage. args and kwargs,
+            if given, will be passed when calling the method; if not given,
+            it is assumes to be a simple attribute.
+            The starting object for the lookups is a SparkContext is sql=False,
+            or a Spark Session if True.
         context_kwargs: dict
             Used to create spark context and session *if* they do not already
             exist globally on this class.
@@ -81,7 +106,6 @@ class SparkHolder(object):
         self.sql = sql
         self.args = args
         self.context_kwargs = context_kwargs or {}
-        self.setup()
 
     def __getstate__(self):
         fields = ['method', 'sql', 'args', 'kwargs', 'context_kwargs']
@@ -89,15 +113,14 @@ class SparkHolder(object):
 
     def __setstate__(self, state):
         self.__dict__.update(state)
-        self.setup()
 
     def setup(self):
         """Call spark to instantiate resource"""
         if self.sc[0] is None:
-            self.set_context()
+            self.set_context(**self.context_kwargs)
         if self.sql:
             if self.session[0] is None:
-                self.set_session()
+                self.set_session(**self.context_kwargs)
             m = self.session[0]
         else:
             m = self.sc[0]

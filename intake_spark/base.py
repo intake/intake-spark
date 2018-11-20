@@ -7,7 +7,7 @@ class SparkHolder(object):
     lock = threading.Lock()
 
     def set_context(self, sc=None, conf=None, master=None, app_name=None,
-                    executor_env=None, spark_home=None, hive=True, **kw):
+                    executor_env=None, spark_home=None, **kw):
         """Establish spark context for this session
 
         Parameters
@@ -26,11 +26,8 @@ class SparkHolder(object):
             If given, environment variables values passed on
         spark_home: str
             Location of spark installation
-        hive: bool
-            default to pass to set_session(), if using
         """
         import pyspark
-        self.hive = hive
         with self.lock:
             if sc is None:
                 if self.sc[0] is not None:
@@ -58,14 +55,12 @@ class SparkHolder(object):
         hive: bool
             Whether to enable Hive support when creating session
         """
-        if hive is None:
-            hive = self.hive
         with self.lock:
             if session is None:
                 if self.session[0] is not None:
                     return
                 from pyspark import sql
-                if hive:
+                if hive or self.hive:
                     session = sql.SparkSession.builder.enableHiveSupport(
                         ).getOrCreate()
                 else:

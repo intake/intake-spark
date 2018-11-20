@@ -78,10 +78,11 @@ class SparkDataFrame(DataSource):
     Examples
     --------
     >>> args = [
-    ...    ('read', ),
-    ...    ('format', ('csv', )),
-    ...    ('option', ('header', 'true')),
-    ...    ('load', ('data.*.csv', ))]
+    ...    ['read', ],
+    ...    ['format', ['csv', ]],
+    ...    ['option', ['header', 'true']],
+    ...    ['load', ['data.*.csv', ]]
+    ...    ]
     >>> context = {'master': 'spark://master.node:7077'}
     >>> source = SparkDataFrame(args, context)
 

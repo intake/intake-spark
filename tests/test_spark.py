@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from intake_spark import SparkDataFrame, SparkRDD, SparkTablesCatalog
 from intake_spark.base import SparkHolder
+import intake
 
 TEST_DATA_DIR = 'tests'
 TEST_DATA = 'sample1.csv'
@@ -18,8 +19,10 @@ def test_rdd():
 
 
 def test_readtext():
-    # TODO  test textfile.to_spark after Intake release 0.3.0
-    pass
+    source = intake.open_textfiles(fn)
+    rdd = source.to_spark()
+    out = rdd.collect()
+    assert '\n'.join(out) == open(fn).read().rstrip('\n')
 
 
 def test_df():

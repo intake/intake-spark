@@ -6,7 +6,7 @@ API Reference
 .. autosummary::
    intake_spark.spark_sources.SparkRDD
    intake_spark.spark_sources.SparkDataFrame
-   intake.spark.spark_cat.SparkTablesCatalog
+   intake_spark.spark_cat.SparkTablesCatalog
 
 .. autoclass:: intake_spark.spark_sources.SparkRDD
    :members:
@@ -14,5 +14,5 @@ API Reference
 .. autoclass:: intake_spark.spark_sources.SparkDataFrame
    :members:
 
-.. autoclass:: intake.spark.spark_cat.SparkTablesCatalog
+.. autoclass:: intake_spark.spark_cat.SparkTablesCatalog
    :members:

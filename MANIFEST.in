@@ -4,3 +4,7 @@ recursive-include . *.yml
 recursive-include . *.yaml
 include versioneer.py
 include intake_spark/_version.py
+
+include LICENSE
+include README.rst
+include requirements.txt

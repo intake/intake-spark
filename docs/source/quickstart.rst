@@ -12,7 +12,7 @@ Installation
 
 To use this plugin for `intake`_, install with the following command::
 
-   conda install -c intake intake-spark
+   conda install -c conda-forge intake-spark
 
 .. _intake: https://github.com/ContinuumIO/intake
 

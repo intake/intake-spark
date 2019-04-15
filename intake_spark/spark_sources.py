@@ -143,11 +143,32 @@ class SparkDataFrame(DataSource):
     def _close(self):
         self.ref = None
 
+        
+def _to_corrected_pandas_type(dt):
+    # Copied from pyspark 2.3
+    """
+    When converting Spark SQL records to Pandas DataFrame,
+    the inferred data type may be wrong. This method gets the corrected
+    data type for Pandas if that type may be inferred uncorrectly.
+    """
+    import numpy as np
+    from pyspark.sql.types import ByteType, ShortType, IntegerType, FloatType
+    if type(dt) == ByteType:
+        return np.int8
+    elif type(dt) == ShortType:
+        return np.int16
+    elif type(dt) == IntegerType:
+        return np.int32
+    elif type(dt) == FloatType:
+        return np.float32
+    else:
+        return None
 
+    
 def pandas_dtypes(schema, rows):
     """Rough dtype for the given pyspark schema"""
     import pandas as pd
-    from pyspark.sql.dataframe import (_to_corrected_pandas_type, IntegralType)
+    from pyspark.sql.types import IntegralType
     # copied from toPandas() method
     df = pd.DataFrame.from_records(rows)
     df.columns = [s.name for s in schema]

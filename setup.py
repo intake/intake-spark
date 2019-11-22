@@ -22,4 +22,11 @@ setup(
     install_requires=requires,
     long_description=open('README.rst').read(),
     zip_safe=False,
+    entry_points={
+        'intake.drivers': [
+            'spark_rdd = intake_spark.spark_sources:SparkRDD',
+            'spark_dataframe = intake_spark.spark_sources:SparkDataFrame',
+            'spark_cat = intake_spark.spark_cat:SparkTablesCatalog',
+        ]
+    },
 )

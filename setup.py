@@ -18,6 +18,12 @@ setup(
     py_modules=['intake_spark'],
     packages=find_packages(),
     package_data={'': ['*.csv', '*.yml', '*.yaml', '*.html']},
+    entry_points={
+        'intake.drivers': [
+            'spark_rdd = intake_spark.spark_sources:SparkRDD',
+            'spark_dataframe = intake_spark.spark_sources:SparkDataFrame',
+            'spark_cat = intake_spark.spark_cat:SparkTablesCatalog',
+        ]},
     include_package_data=True,
     install_requires=requires,
     long_description=open('README.rst').read(),

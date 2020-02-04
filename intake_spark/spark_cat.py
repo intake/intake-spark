@@ -1,5 +1,6 @@
 from intake.catalog.local import LocalCatalogEntry, Catalog
-from . import SparkDataFrame, __version__
+from .spark_sources import SparkDataFrame
+from ._version import get_versions
 from .base import SparkHolder
 
 
@@ -12,7 +13,7 @@ class SparkTablesCatalog(Catalog):
     from Hive.
     """
     name = 'spark_cat'
-    version = __version__
+    version = get_versions()['version']
 
     def __init__(self, database=None, context_kwargs=None, metadata=None):
         """

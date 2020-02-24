@@ -19,7 +19,7 @@ install:
 - |
   echo "Configuring conda."
   source $HOME/miniconda3/bin/activate root
-  conda install -y -c conda-forge flake8 conda-verify jinja2 intake pyspark pytest pip
+  conda install -y -c conda-forge  openjdk flake8 conda-verify jinja2 intake pyspark pytest pip
   pip install -e .
 script:
 - |

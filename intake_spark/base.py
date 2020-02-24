@@ -64,7 +64,7 @@ class SparkHolder(object):
                     session = sql.SparkSession.builder.enableHiveSupport(
                         ).getOrCreate()
                 else:
-                    session = sql.SparkSession.enableHiveSupport().getOrCreate()
+                    session = sql.SparkSession.getOrCreate()
             self.session[0] = session
 
     @classmethod

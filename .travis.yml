@@ -19,16 +19,13 @@ install:
 - |
   echo "Configuring conda."
   source $HOME/miniconda3/bin/activate root
-  conda install -y conda-build anaconda-client flake8 conda-verify
+  conda install -y -c conda-forge  openjdk=8 flake8 conda-verify jinja2 intake pyspark pytest pip
+  pip install -e .
 script:
 - |
-  flake8 .
-  conda build -c intake -c defaults -c conda-forge ./conda
-- |
-  if [ -n "$TRAVIS_TAG" ]; then
-      # If tagged git version, upload package to main channel
-      anaconda -t ${ANACONDA_TOKEN} upload -u intake --force `conda build --output ./conda`
-  fi
+  export JAVA_HOME=$HOME/miniconda3
+  flake8 intake_spark
+  pytest
 notifications:
   email: false
   on_success: change

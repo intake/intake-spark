@@ -1,8 +1,3 @@
-import requests
-import shlex
-import subprocess
-import time
-
 
 def verify_plugin_interface(plugin):
     """Assert types of plugin attributes."""
@@ -20,4 +15,3 @@ def verify_datasource_interface(source):
     for method in ['discover', 'read', 'read_chunked', 'read_partition',
                    'to_dask', 'close']:
         assert hasattr(source, method)
-

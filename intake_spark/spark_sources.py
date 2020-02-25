@@ -114,7 +114,7 @@ class SparkDataFrame(DataSource):
             self.npartitions = self.ref.rdd.getNumPartitions()
             rows = self.ref.take(10)
             self.dtype = pandas_dtypes(self.ref.schema, rows)
-            self.shape = (None,len(self.dtype))
+            self.shape = (None, len(self.dtype))
         return Schema(npartitions=self.npartitions,
                       extra_metadata=self.metadata,
                       dtype=self.dtype,
@@ -143,7 +143,7 @@ class SparkDataFrame(DataSource):
     def _close(self):
         self.ref = None
 
-        
+
 def _to_corrected_pandas_type(dt):
     # Copied from pyspark 2.3
     """
@@ -164,7 +164,7 @@ def _to_corrected_pandas_type(dt):
     else:
         return None
 
-    
+
 def pandas_dtypes(schema, rows):
     """Rough dtype for the given pyspark schema"""
     import pandas as pd
